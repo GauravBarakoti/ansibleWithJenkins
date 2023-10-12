@@ -8,8 +8,20 @@
       instance_type: t2.micro
       image: ami-053b0d53c279acc90
       wait: true
-      count: 2
       region: us-east-1
       vpc_subnet_id: subnet-0bf916f334dd8e482
       instance_tags:
-        Name: demo
+        Name: First
+- name: Ansible Test 2nd
+  hosts: localhost
+  tasks:
+  - name: Launch
+    ec2:
+      key_name: demo_key
+      instance_type: t2.micro
+      image: ami-053b0d53c279acc90
+      wait: true
+      region: us-east-1
+      vpc_subnet_id: subnet-0faabdddd7ca09550
+      instance_tags:
+        Name: Second
