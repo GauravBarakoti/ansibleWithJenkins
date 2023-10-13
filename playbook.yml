@@ -14,7 +14,7 @@
   tasks:
     - ec2_key:
         name: my_keypair
-        key_material: "{{ lookup('file', './managedkey.pub') }}"
+        key_material: "{{ lookup('file', '/home/ubuntu/ansibleWithJenkins/managedkey.pub') }}"
     - name: Create an ec2 instance
       ec2:
         key_name: "{{ keypair }}"
