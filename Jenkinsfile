@@ -1,19 +1,19 @@
 pipeline {
   agent any
   stages {
-    stage ( 'configure dependencies' ) {
-      steps {
-        sshagent(['controlNode']) {
-          sh '''
-          ssh -tt -o StrictHostKeyChecking=no ubuntu@${ip} sudo apt update
-          ssh -tt -o StrictHostKeyChecking=no ubuntu@${ip} sudo apt-get install ansible -y
-          ssh -tt -o StrictHostKeyChecking=no ubuntu@${ip} apt install python3-pip -y
-          ssh -tt -o StrictHostKeyChecking=no ubuntu@${ip} pip install boto
-          ssh -tt -o StrictHostKeyChecking=no ubuntu@${ip} sudo mkdir /etc/ansible/
-          '''
-        }
-      }
-    }
+    // stage ( 'configure dependencies' ) {
+    //   steps {
+    //     sshagent(['controlNode']) {
+    //       sh '''
+    //       ssh -tt -o StrictHostKeyChecking=no ubuntu@${ip} sudo apt update
+    //       ssh -tt -o StrictHostKeyChecking=no ubuntu@${ip} sudo apt-get install ansible -y
+    //       ssh -tt -o StrictHostKeyChecking=no ubuntu@${ip} apt install python3-pip -y
+    //       ssh -tt -o StrictHostKeyChecking=no ubuntu@${ip} pip install boto
+    //       ssh -tt -o StrictHostKeyChecking=no ubuntu@${ip} sudo mkdir /etc/ansible/
+    //       '''
+    //     }
+    //   }
+    // }
     stage ( 'Storing AWS Cred in ENV' ) {
       steps {
         sshagent(['controlNode']) {
