@@ -1,7 +1,6 @@
 ---
 - name: Ansible with AWS
   hosts: localhost
-  gather_facts: False
 
   vars:
       region: us-east-1
