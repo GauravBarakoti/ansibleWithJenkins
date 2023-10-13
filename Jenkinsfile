@@ -17,6 +17,7 @@ pipeline {
     stage ( 'cloning the repo which has playbook.yml' ) {
       steps {
         sshagent(['controlNode']) {
+          // command is used for making an SSH connection with a remote server
           sh 'ssh -tt -o StrictHostKeyChecking=no ubuntu@${params.ipControlNode} git clone https://github.com/GauravBarakoti/ansibleWithJenkins.git'
           sh 'ssh -tt -o StrictHostKeyChecking=no ubuntu@${params.ipControlNode} cd ansibleWithJenkins'
           sh 'ssh -tt -o StrictHostKeyChecking=no ubuntu@${params.ipControlNode} ansible-playbook playbook.yml'
