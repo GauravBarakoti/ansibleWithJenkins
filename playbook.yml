@@ -12,7 +12,7 @@
         region: "{{ region }}"
         name: my_keypair
         key_material: "{{ lookup('file', '/home/ubuntu/managedkey.pub') }}"
-    - ec2:
+    - ec2_instance:
         key_name: "{{ keypair }}"
         group: default  # security group name
         instance_type: "{{ instance_type }}"
