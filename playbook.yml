@@ -13,8 +13,8 @@
     - ec2_key:
         region: "{{ region }}"
         name: my_keypair
-        key_material: "{{ lookup('file', '/home/ubuntu/ansibleWithJenkins/managedkey.pub') }}"
-        
+        key_material: "{{ lookup('file', '/home/ubuntu/managedkey.pub') }}"
+
     - name: Create an ec2 instance
       ec2:
         key_name: "{{ keypair }}"
