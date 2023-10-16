@@ -1,0 +1,12 @@
+---
+- hosts: tag_Name_webserver
+  become: true
+  tasks:
+    - name: Update package lists
+      apt:
+        update_cache: yes
+
+    - name: Install Apache2
+      apt:
+        name: apache2
+        state: latest
