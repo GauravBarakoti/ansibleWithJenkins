@@ -20,14 +20,12 @@
       template:
           src: "./apacheconfig"
           dest: "/etc/apache2/sites-available/000-default.conf"
-      
+      notify:
+        - restart apache2
     - name: Webpage
       copy:
         content: "<h1> WebPage of Ansible-Slave node Whose Privateip is {{ ansible_facts['default_ipv4']['address'] }} and public_ip is {{ inventory_hostname }} </h1>"
         dest: "/home/ubuntu/app/index.html"
-
-    - name: start apache2
-      service: 
-        name: apache2
-        state: restarted 
-        enabled: yes
+  handlers:
+    - name: restart apache2
+      service: name=apache2 state=restarted
