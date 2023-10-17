@@ -1,10 +1,6 @@
 # Ansible Configuration Using Jenkins
 
-
-Visits:
-
-![Visitor Count](https://profile-counter.glitch.me/gauravbarakoti/count.svg)
-
+You can use this cool feature for visitors count on your profile:
 ```
 ![Visitor Count](https : //profile-counter.glitch.me/{YOUR USER}/count.svg)
 ```
