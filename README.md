@@ -33,6 +33,12 @@ Step 1: Install all your requirements for dynamic inventory using aws_ec2 ansibl
 ```
  sudo apt update
  ```
+```
+sudo apt install python3-pip
+sudo pip install boto boto3
+
+```
+
  ```
  sudo apt install software-properties-common
  ```

@@ -10,8 +10,24 @@
       apt:
         name: apache2
         state: latest
-    
+
+    - name: "Creating Document root"
+      file:
+          state: directory
+          dest: "/home/ubuntu/app/"
+
+    - name: "Configuration File"
+      template:
+          src: "./apacheconfig"
+          dest: "/etc/apache2/sites-available/000-default.conf"
+      
     - name: Webpage
       copy:
         content: "<h1> WebPage of Ansible-Slave node Whose Privateip is {{ ansible_facts['default_ipv4']['address'] }} and public_ip is {{ inventory_hostname }} </h1>"
-        dest: "/var/www/html/index.html"
+        dest: "/home/ubuntu/app/index.html"
+
+    - name: start apache2
+      service: 
+        name: apache2
+        state: restarted 
+        enabled: yes

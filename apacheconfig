@@ -1,0 +1,4 @@
+Listen 80
+<virtualhost {{ ansible_facts['default_ipv4']['address'] }}:{{ port_number }}>
+    documentroot /home/ubuntu/app/
+</virtualhost>

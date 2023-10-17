@@ -1,7 +1,9 @@
 ---
-- hosts: localhost
-  gather_facts: false
-  become: true
+- hosts: localhost 
+# Name of the server you want to connect to. local: To deploy tasks locally on the Ansible control node
+  gather_facts: false  
+  # The gather_facts module from the Ansible playbook runs the setup module by default at the start of each playbook to gather the facts about remote hosts.#
+#  become: true # To allow force privileges
   vars:
       region: us-east-1
       instance_type: t2.micro
@@ -10,18 +12,41 @@
       subnetid: subnet-0bf916f334dd8e482
   tasks:
     - ec2_key:
+        profile: "devops"
         region: "{{ region }}"
         name: my_keypair
         key_material: "{{ lookup('file', '/home/ubuntu/managedkey.pub') }}"
     - ec2_instance:
         key_name: "{{ keypair }}"
-        name: "webserver"
+        # name: "webserver"
+        profile: "devops"
         security_group: default  # security group name
         instance_type: "{{ instance_type }}"
         image_id: "{{ ami }}"
         wait: true
         region: "{{ region }}"
         vpc_subnet_id: "{{ subnetid }}"
-        count: 2 # default
+        count: 1 # 1 default
+        tags:
+          Env: test
+          Name: web1
+          Team: dev
+        network:
+          assign_public_ip: true
+    - ec2_instance:
+        key_name: "{{ keypair }}"
+        # name: "webserver"
+        profile: "devops"
+        security_group: default  # security group name
+        instance_type: "{{ instance_type }}"
+        image_id: "{{ ami }}"
+        wait: true
+        region: "{{ region }}"
+        vpc_subnet_id: "{{ subnetid }}"
+        count: 1 # 1 default
+        tags:
+          Env: prod
+          Name: web2
+          Team: devops
         network:
           assign_public_ip: true
