@@ -13,7 +13,18 @@ This documentation will help you understand the configuration of 2 EC2 instances
 
 We'll start from the very basics. And we'll setup dynamic inventory in order to complete our goals.
 
-## Step 1: Install all your requirements for dynamic inventory using aws_ec2 ansible plugins:
+## Table of Contents
+- [Installing Requirements](#installing-requirements)
+- [Permissions to access AWS](#step-2-provide-your-aws-credentials)
+- [Playbooks Needed](#step-3-create-playbooks-and-ansiblecfg-file)
+- [Jenkins Deployment](#step-4-jenkins-deployment)
+
+
+
+
+## Installing Requirements
+
+Step 1: Install all your requirements for dynamic inventory using aws_ec2 ansible plugins:
 
     You must have the following versions of software packages:
 
@@ -127,10 +138,52 @@ Setup jenkins server using this offical documentation:
 
 https://www.jenkins.io/doc/book/installing/linux/
 
+Go to manage jenkins -> Pulgins -> install SSH plugins
+
+Then,
+
+provide the private key in the global credentials with username: ubuntu
+
+Manage Jenkins -> Configure -> SSH Agent 
+
+hostname : `ipv4 of ansible node`
+
+and according to your need you can do more modifications.
 
 
+- Create the Jenkins Job using pipeline that will the following work -
+
+1. Get the playbooks from github to your ansible control node.
+
+2. Runs the first playbook that will create the 2 EC2 instances.
+
+3. Wait for them to come up.
+
+4. Configure the apache on both managed node or slave nodes with custom web page.
+
+The Jenkinsfile is provided above you can view it for reference.
 
 
+In this way, we can achieve Ansible Configuration using Jenkins as a CI/CD.
+
+Feel free to adapt this documentation to your specific requirements and Flask application configuration.
+
+
+# **Thank You**
+
+I hope you find it useful. If you have any doubt in any of the step then feel free to contact me.
+If you find any issue in it then let me know.
+
+<!-- [![Build Status](https://img.icons8.com/color/452/linkedin.png)](https://www.linkedin.com/in/gaurav-barakoti-27002223b) -->
+
+
+<table>
+  <tr>
+    <th><a href="https://www.linkedin.com/in/gaurav-barakoti-27002223b" target="_blank"><img src="https://img.icons8.com/color/452/linkedin.png" alt="linkedin" width="30"/><a/></th>
+    <th><a href="mailto:bestgaurav1234@gmail.com" target="_blank"><img src="https://img.icons8.com/color/344/gmail-new.png" alt="Mail" width="30"/><a/>
+</th>
+  </tr>
+</table>
 
 
 
