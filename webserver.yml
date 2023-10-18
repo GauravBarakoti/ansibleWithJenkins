@@ -1,5 +1,5 @@
 ---
-- hosts: tag_Name_webserver
+- hosts: aws_ec2
   become: true
   tasks:
     - name: Update package lists
@@ -16,16 +16,28 @@
           state: directory
           dest: "/home/ubuntu/app/"
 
-    - name: "Configuration File"
-      template:
-          src: "./apacheconfig"
-          dest: "/etc/apache2/sites-available/000-default.conf"
-      notify:
-        - restart apache2
     - name: Webpage
       copy:
         content: "<h1> WebPage of Ansible-Slave node Whose Privateip is {{ ansible_facts['default_ipv4']['address'] }} and public_ip is {{ inventory_hostname }} </h1>"
         dest: "/home/ubuntu/app/index.html"
+
+    - name: Change ownership of /home/ubuntu/ to ubuntu:www-data
+      ansible.builtin.command: chown -R ubuntu:www-data /home/ubuntu/
+
+    - name: Replace a directory
+      ansible.builtin.lineinfile:
+        path: "/etc/apache2/apache2.conf"
+        search_string: '<Directory /var/www/>'
+        line: <Directory /home/ubuntu/app>
+
+    - name: Replace a directory
+      ansible.builtin.lineinfile:
+        path: "/etc/apache2/sites-available/000-default.conf"
+        search_string: 'DocumentRoot /var/www/html'
+        line: DocumentRoot /home/ubuntu/app/
+      notify:
+        - restart apache2
+
   handlers:
     - name: restart apache2
       service: name=apache2 state=restarted
