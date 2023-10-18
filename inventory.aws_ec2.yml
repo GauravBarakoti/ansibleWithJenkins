@@ -2,11 +2,12 @@
 plugin: aws_ec2
 regions:
   - us-east-1
-filters:
-  instance-state-name : running
-keyed_groups:
-  - key: tags
-    prefix: tag
+include_filters:
+# This includes everything in the inventory that has the following tags.
+- tag:Env:
+    - 'test'
+    - 'prod'
+# this inventory will list the remote host with the specific tags only
 hostnames:
   - ip-address
 compose:
