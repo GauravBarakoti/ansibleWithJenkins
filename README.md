@@ -169,7 +169,7 @@ hostname : `ipv4_address of ansible node`
 
 and according to your need you can do more modifications.
 
-We will give the required details of variables the environment variables. I have used the environment variables in the pipeline using `-e` which set additional variables as key=value.
+We will give the required details of variables in the environment variables. I have used the environment variables in the pipeline using `-e` which set additional variables as key=value.
 
 
 
