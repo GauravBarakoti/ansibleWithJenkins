@@ -31,11 +31,12 @@
           Env: "{{ item.Env }}"
           Name: "{{ item.Name }}"
           Team: "{{ item.Team }}"
+        count: " {{item.count }}"
         network:
           assign_public_ip: true  # Assign a public IP address to the instance.
       loop:
-        - { Env: 'test', Name: 'web1', Team: 'dev' }
-        - { Env: 'prod', Name: 'web2', Team: 'devops' }
+        - { Env: 'test', Name: 'web1', Team: 'dev', count: '1' }
+        - { Env: 'prod', Name: 'web2', Team: 'devops', count: '2' }
 
 
 # playbook for launching different instances using different tasks
