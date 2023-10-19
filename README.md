@@ -159,7 +159,12 @@ webserver.yml
 ```
 
 
+
 And now we'll create the dynamic inventory file named as `inventory.aws_ec2.yml` `aws_ec2.yml is required` in the name of dynamic inventory file without this it will not work.
+
+
+NOTE: Your ansible server should that required permission {you have to attach a role to your ec2 instance and give sufficient permissions to it.}
+
 
 ```
 ---
