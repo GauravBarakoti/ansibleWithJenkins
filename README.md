@@ -90,6 +90,75 @@ And, In the second playbook we also want to change the document root for our apa
 
 First playbook name is `playbook.yml`. And, second playbook is `webserver.yml` {view them for reference.}
 
+```
+playbook.yml
+---
+- hosts: localhost  # This playbook is executed locally on the Ansible control node.
+  gather_facts: false  # Disable gathering facts about the local system.
+
+  vars:
+    region: "{{ region }}"  # Variables to be replaced with actual values during execution.
+    instance_type: "{{ instance_type }}"
+    ami: "{{ image_id }}"
+    keypair: "{{ key_name }}"
+    subnetid: "{{ subnet_id }}"
+    aws_profile: "{{ aws_profile }}"
+
+  tasks:
+    - name: Create EC2 Key Pair  # This task creates an EC2 key pair.
+      ec2_key:
+        profile: "{{ aws_profile }}"  # AWS profile to use for authentication.
+        region: "{{ region }}"  # AWS region where the key pair will be created.
+        name: my_keypair  # Name of the key pair.
+        key_material: "{{ lookup('file', '/home/ubuntu/managedkey.pub') }}"  # Public key material is read from the file.
+
+    - name: Launch EC2 Instance for Test  # This task launches an EC2 instance for testing.
+      ec2_instance:
+        key_name: "{{ keypair }}"  # Key pair to associate with the instance.
+        profile: "devops"  # AWS profile to use.
+        security_group: default  # The security group for the instance.
+        instance_type: "{{ instance_type }}"  # Instance type, e.g., t2.micro.
+        image_id: "{{ ami }}"  # The Amazon Machine Image (AMI) to use.
+        wait: true  # Wait for the instance to be in a running state.
+        region: "{{ region }}"  # AWS region for the instance.
+        vpc_subnet_id: "{{ subnetid }}"  # The ID of the subnet where the instance will be launched.
+        count: 1  # Launch a single instance.
+        tags:  # Tags to associate with the instance for easy identification.
+          Env: test
+          Name: web1
+          Team: dev
+        network:
+          assign_public_ip: true  # Assign a public IP address to the instance.
+```
+```
+webserver.yml
+---
+- hosts: aws_ec2  # Target hosts where tasks will be executed.
+  become: true  # Run tasks with escalated privileges.
+
+  tasks:
+    - name: Update package lists  # Update the package lists on the remote server.
+      apt:
+        update_cache: yes
+
+    - name: Install Apache2  # Install the Apache2 package.
+      apt:
+        name: apache2
+        state: latest
+
+    - name: "Creating Document root"  # Create a document root directory.
+      file:
+          state: directory
+          dest: "/home/ubuntu/app/"
+
+    - name: Webpage  # Create a custom web page with server information.
+      copy:
+        content: "<h1> WebPage of Ansible-Slave node Whose Private IP is {{ ansible_facts['default_ipv4']['address'] }} and public IP is {{ inventory_hostname }} </h1>"
+        dest: "/home/ubuntu/app/index.html"
+
+```
+
+
 And now we'll create the dynamic inventory file named as `inventory.aws_ec2.yml` `aws_ec2.yml is required` in the name of dynamic inventory file without this it will not work.
 
 ```
@@ -183,7 +252,34 @@ We will give the required details of variables in the environment variables. I h
 
 4. Configure the apache on both managed node or slave nodes with custom web page.
 
-The Jenkinsfile is provided above you can view it for reference.
+The Jenkinsfile is 
+
+```
+pipeline {
+  agent any  // Execute the pipeline on any available Jenkins agent.
+
+  stages {
+    stage('Execute Ansible playbook') {  // Define the 'Execute Ansible playbook' stage.
+      steps {
+        sshagent(['controlNode']) {  // Start an SSH agent to securely connect to remote servers.
+
+          // Clone a Git repository on the remote server using SSH.
+          sh 'ssh -tt -o StrictHostKeyChecking=no ubuntu@${ip} git clone https://github.com/GauravBarakoti/ansibleWithJenkins.git'
+
+          // Execute an Ansible playbook on the remote server with environment variables.
+          sh 'ssh -tt -o StrictHostKeyChecking=no ubuntu@${ip} "cd ansibleWithJenkins; ansible-playbook playbook.yml -e region=$REGION -e instance_type=$INSTANCE -e image_id=$AMI -e key_name=$KEY -e subnet_id=$SUBNET -e aws_profile=$AWS_PROFILE;"'
+
+          // Sleep for 40 seconds (this is for the Ansible playbook to complete ec2 povision tasks).
+          sh 'sleep 40'
+
+          // Execute another Ansible playbook on the remote server.
+          sh 'ssh -tt -o StrictHostKeyChecking=no ubuntu@${ip} "cd ansibleWithJenkins;ansible-playbook webserver.yml;"'
+        }
+      }
+    }
+  }
+}
+```
 
 
 In this way, we can achieve Ansible Configuration using Jenkins as a CI/CD.
