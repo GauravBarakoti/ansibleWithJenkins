@@ -5,7 +5,9 @@ You can use this cool feature for visitors count on your profile:
 ![Visitor Count](https : //profile-counter.glitch.me/{YOUR USER}/count.svg)
 ```
 
-This documentation will help you understand the configuration of 2 EC2 instances on aws and configuring them as apache server with custom webpage that will show the Private and Public IP of the slave node whose ip you are hitting.
+This documentation will help you understand the configuration of 2 EC2 instances on aws and configuring them as apache server (using `dynamic inventory`) with custom webpage that will show the Private and Public IP of the slave node whose ip you are hitting.
+
+And Further also we will explore about creating ec2 with diffenet tags for `test` and `prod` environment.
 
 We'll start from the very basics. And we'll setup dynamic inventory in order to complete our goals.
 
@@ -68,12 +70,25 @@ On Ansible Contol Node:
 
 Use either `aws configure`  or export the `aws_access_key`, `aws_secret_key` to environment variables
 
+By default, these cred will be saved in default profile but we will change the profile to `devops`.
+
+```
+aws configure --profile devops
+```
+we will use this profile for creating instances on `AWS`.
+
 ## Step 3: Create Playbooks and ansible.cfg file
 
 Here, I have two playbooks.
 
 - First is for creating 2 EC2 instances and, 
 - Second is to configure them as a webserver by installing apache on both.
+
+Add on, our playbook will have the ec2 configuration and variables that will be passed through the Jenkins Environment Variables.
+
+And, In the second playbook we also want to change the document root for our apache.
+
+First playbook name is `playbook.yml`. And, second playbook is `webserver.yml` {view them for reference.}
 
 And now we'll create the dynamic inventory file named as `inventory.aws_ec2.yml` `aws_ec2.yml is required` in the name of dynamic inventory file without this it will not work.
 
@@ -94,6 +109,8 @@ hostnames:
   - ip-address
 # output details of inventory will be ip-address
 ```
+
+NOTE: I have made some changes in my inventory according to the requirement. Remember that by `default` the inventory will show the `running instance only`.
 
 Now one more step is required,
 
@@ -140,24 +157,27 @@ Setup jenkins server using this offical documentation:
 
 https://www.jenkins.io/doc/book/installing/linux/
 
+I have used SSH Agent Plugin you can also use the worker node for running playbooks.
+
 Go to manage jenkins -> Pulgins -> install SSH plugins
 
-Then,
-
-provide the private key in the global credentials with username: ubuntu
+Then, provide the private key in the global credentials with username: ubuntu and private_key also.
 
 Manage Jenkins -> Configure -> SSH Agent 
 
-hostname : `ipv4 of ansible node`
+hostname : `ipv4_address of ansible node`
 
 and according to your need you can do more modifications.
+
+We will give the required details of variables the environment variables. I have used the environment variables in the pipeline using `-e` which set additional variables as key=value.
+
 
 
 - Create the Jenkins Job using pipeline that will the following work -
 
 1. Get the playbooks from github to your ansible control node.
 
-2. Runs the first playbook that will create the 2 EC2 instances.
+2. Runs the first playbook that will create the 2 EC2 instances  with the provided environment variables through Jenkins ENV.
 
 3. Wait for them to come up.
 
