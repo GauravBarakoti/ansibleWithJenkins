@@ -31,6 +31,18 @@
         search_string: '<Directory /var/www/>'  # Search for this string.
         line: <Directory /home/ubuntu/app>  # Replace with this line.
 
+    - name: Replace a directory in Apache2 configuration
+      ansible.builtin.blockinfile:
+        path: "/etc/apache2/apache2.conf"
+        insertafter: "</Directory>"
+        block: |
+            <Directory /home/ubuntu/app>
+                  Options Indexes FollowSymLinks
+                  AllowOverride None
+                  Require all granted
+                  Allow from all
+            </Directory>  
+
     - name: Replace the DocumentRoot in 000-default.conf
       ansible.builtin.lineinfile:  # Replace a line in a file.
         path: "/etc/apache2/sites-available/000-default.conf"

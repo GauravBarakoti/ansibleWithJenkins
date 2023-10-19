@@ -18,8 +18,7 @@
         name: "{{ keypair }}"  # Name of the key pair.
         key_material: "{{ lookup('file', '/home/ubuntu/managedkey.pub') }}"  # Public key material is read from the file.
 
-    - name: Loops test 
-      ec2_instance:
+    - ec2_instance:
         key_name: "{{ keypair }}"  # Key pair to associate with the instance.
         profile: "{{ aws_profile }}"  # AWS profile to use.
         security_group: default  # The security group for the instance.
@@ -28,7 +27,6 @@
         wait: true  # Wait for the instance to be in a running state.
         region: "{{ region }}"  # AWS region for the instance.
         vpc_subnet_id: "{{ subnetid }}"  # The ID of the subnet where the instance will be launched.
-        count: 2  # Launch a single instance.
         tags:  # Tags to associate with the instance for easy identification.
           Env: "{{ item.Env }}"
           Name: "{{ item.Name }}"
